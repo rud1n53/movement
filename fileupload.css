@@ -1,0 +1,45 @@
+* {
+  font-family: Noto Sans KR, sans-serif;
+}
+body {
+  overflow: hidden;
+}
+.btn-upload {
+  width: 60vw;
+  height: 15vh;
+  background: #8e919b;
+  border: none;
+  border-radius: 5vw;
+  font-size: 2.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  padding: 20px;
+  font-weight: 400;
+  color: #fff;
+}
+.btn-upload:hover {
+  transition: all 0.2s;
+  background: #7a7c82;
+  color: #fff;
+  transform: scale(0.97);
+}
+
+#file {
+  display: none;
+}
+
+.ttt{
+    color: #8e919b;
+    font-size: 5vw;
+    font-weight: 500;
+}
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}

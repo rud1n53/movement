@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200;300;400;500&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <link rel="stylesheet" href="style.css">
+        <title>MOVEMENT</title>
+    </head>
+    <body>
+        <div class="nightsky">
+            <p class="goodnight">안심하고<br><span style="font-size: 1.6rem;">주무세요.</span></p>
+            <svg class="sky"></svg>
+        </div>
+        <div class="main-container">
+            <img src="mainlogo.jpg" style="width: 75%; margin-bottom: 50px;">
+            <nav>
+                <ul>
+                    <li>
+                        <button id="intro" onclick="introduction()">프로그램 소개</button>
+                    </li>
+                    <li>
+                        <button id="madeby" onclick="creditAppear()">제작진</button>
+                    </li>
+                    <li>
+                        <button id="start" onclick="fade()">시작</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <h1 class="main-sentence"><span style="font-size:3rem;">SAVING THE EARTH</span> <br>: WITH <span style="color: rgb(129, 179, 255); font-weight: 700;">SENSOR</span></h1>
+        <div class="credit" onclick="creditDisappear()">
+            <h1>MEMBER -</h1>
+            <div class="circle" id="c1"><h2>DEVELOP 1.</h2><p>21210 박시영<br>아이디어 고안 / 프로그래밍</p></div>
+            <div class="circle" id="c2"><h2>DEVELOP 2.</h2><p>21108 나윤서<br>아이디어 고안 / 프로그래밍</p></div>
+            <div class="circle" id="c3"><h2>DESIGN.</h2><p>21106 김은지<br>로고 및 프로그램 디자인</p></div>
+        </div>
+        <div class="screen">
+            <img src="city0.png" class="city" id="city0">
+            <img src="city1.png" class="city" id="city1">
+            <img src="city2.png" class="city" id="city2">
+            <img src="city3.png" class="city" id="city3">
+        </div>
+        <div class="screen-text">
+            <span class="material-symbols-outlined" id="timeIcon" style="font-size: 5em;" onclick="turn()">wb_sunny</span>
+            <h1 id="sth">데이터를 넣어주세요.</h1>
+            <p id="stp">햇님을 누르면 실행이 시작됩니다 :D</p>
+        </div>
+        <div class="bar-container">
+            <div id="Xmove"></div>
+            <div id="Ymove"></div>
+            <div id="Zmove"></div>
+        </div>
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+    </body>
+    <script>
+        const maincon = document.getElementsByClassName('main-container')[0];
+        const nightsky = document.getElementsByClassName('nightsky')[0];
+        const goodnight = document.getElementsByClassName('goodnight')[0];
+        const mainsen = document.getElementsByClassName('main-sentence')[0];
+        const sky = document.getElementsByClassName('sky')[0];
+        const credit = document.getElementsByClassName('credit')[0];
+        const st = document.getElementsByClassName('screen-text')[0];
+        const body = document.getElementsByTagName('body')[0];
+        const cities = document.querySelectorAll('.city');
+        const sth = document.getElementById('sth');
+        const stp = document.getElementById('stp');
+        const timeIcon = document.getElementById('timeIcon');
+
+        var Xh = document.getElementById('Xmove');
+        var Yh = document.getElementById('Ymove');
+        var Zh = document.getElementById('Zmove');
+        var AccX = [];
+        var AccY = [];
+        var AccZ = [];
+
+        var currCity;
+        var start = 0;
+        var finCount = 0;
+
+        const makeStars = () => {
+            const maxLength = Math.max(window.innerWidth, window.innerHeight);
+            const randomX = () => Math.random() * maxLength;
+            const randomY = () => Math.random() * maxLength;
+            const randomRadius = () => Math.random() * 0.7 + 0.3;
+            const size = Math.floor(maxLength / 2);
+
+            const starList = new Array(size).fill().map((_, i) => {
+                return `<circle class='star'
+                    cx=${randomX()}
+                    cy=${randomY()}
+                    r=${randomRadius()}
+                    className="star" />`
+            }).join('');
+
+            sky.innerHTML = starList;
+        }
+        makeStars();
+
+        window.onresize = () => {
+		    makeStars();
+	    }
+
+        function turn() {
+            if (start == 0) {
+                timeIcon.classList.add('turn');
+                sleepcalculate();
+                start = start + 1;
+            }
+        }
+
+        function sleepcalculate() {
+            sth.innerHTML = "MOVEMENT가 작동하고 있습니다..";
+            stp.innerHTML = "* 수면이 감지되면 자동으로 종료됩니다!";
+            var i = 1;
+            var graphmove = setInterval(function() {
+                Xh.style.height = String(30 + Math.abs(AccX[i]-AccX[i-1])) + "px"; 
+                Yh.style.height = String(30 + Math.abs(AccY[i]-AccY[i-1])) + "px"; 
+                Zh.style.height = String(30 + Math.abs(AccZ[i]-AccZ[i-1])) + "px"; 
+
+                i = i + 1;
+
+                if ((Math.abs(AccX[i]-AccX[i-1])+Math.abs(AccY[i]-AccY[i-1])+Math.abs(AccZ[i]-AccZ[i-1]))/3 < 200) {
+                    finCount = finCount + 1;
+                } else {
+                    finCount = 0;
+                };
+                if (finCount == 10) {
+                    finish();
+                    clearInterval(graphmove);
+                };
+                
+                if (i > AccX.length) {
+                    finishFail();
+                    clearInterval(graphmove);
+                };
+
+            }, 300);
+        }
+
+        function openChild() {
+            window.name = "parentForm";
+            openWin = window.open("fileupload.html", "childForm", "width=500, height=300, resizable = no, scrollbars = no");    
+        }
+
+        function fade() {
+            goodnight.style.opacity = "1";
+            maincon.classList.add('fadeout');
+            mainsen.classList.add('fadeout2');
+            nightsky.classList.add('disappear');
+            setTimeout(() => nightsky.remove() , 4000);
+            setTimeout(() => credit.remove() , 3000);
+            setTimeout(() => openChild() , 3000);
+            setTimeout(() => st.style.opacity = "1" , 3000);
+        }
+
+        function creditAppear() {
+            credit.classList.add('credit_appear');
+        }
+        function creditDisappear() {
+            credit.classList.remove('credit_appear');
+        }
+
+        function finish() {
+            Xh.style.height = "0";
+            Yh.style.height = "0";
+            Zh.style.height = "0";
+            st.style.opacity = "0"
+
+            setTimeout(function() {
+                timeIcon.innerHTML = "clear_night";
+                sth.innerHTML = "불을 꺼드렸습니다. zZ";
+                stp.innerHTML = "안녕히 주무세요 :)";
+            }, 1000);
+
+            st.style.color = "white";
+            body.style.backgroundColor = "black";
+            body.style.backgroundImage = "unset";
+            setTimeout(() => st.style.opacity = "1", 1000);
+            for ( var i = 0; i < 4; i++) {
+                currCity = cities[i];
+                currCity.classList.add('disappear');
+            };
+            setTimeout(() => location.reload(), 7000);  
+        }
+
+        function finishFail() {
+            Xh.style.height = "0";
+            Yh.style.height = "0";
+            Zh.style.height = "0";
+            sth.innerHTML = "수면을 감지하지 못했습니다.";
+            stp.innerHTML = "새로운 데이터를 첨부해주세요.";
+            timeIcon.classList.remove('turn');
+            start = 0;
+            finCount = 0;
+            AccX = [];
+            AccY = [];
+            AccZ = [];
+            openChild();
+        }
+    </script>
+</html>
